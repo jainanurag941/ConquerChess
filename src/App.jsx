@@ -20,7 +20,7 @@ const App = () => {
     return <UserForm />;
   }
 
-  return <div>App</div>;
+  return "Success";
 };
 
 export default App;
