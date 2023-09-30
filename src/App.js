@@ -5,12 +5,16 @@ import ChessBoard from "./components/ChessBoard";
 
 function App() {
   const [chessboard, setChessBoard] = useState([]);
+  const [isGameOver, setIsGameOver] = useState();
+  const [result, setResult] = useState();
 
   useEffect(() => {
     initGameState();
-    
+
     const subscribe = chessGameObservable.subscribe((game) => {
       setChessBoard(game.board);
+      setIsGameOver(game.isGameOver);
+      setResult(game.result);
     });
 
     return () => subscribe.unsubscribe();
