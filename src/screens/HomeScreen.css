@@ -1,0 +1,13 @@
+.home {
+  min-height: 100vh;
+}
+
+.home-columns {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pointer {
+  cursor: pointer;
+}

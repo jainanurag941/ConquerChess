@@ -1,6 +1,6 @@
 import React from "react";
 import "./GameApp.css";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomeScreen from "./screens/HomeScreen";
 import UserForm from "./components/UserForm";
 import GameApp from "./GameApp";
@@ -20,7 +20,14 @@ const App = () => {
     return <UserForm />;
   }
 
-  return "Success";
+  return (
+    <Router>
+      <Routes>
+        <Route exact path="/" element={<HomeScreen />} />
+        <Route path="/game/:id" element={<GameApp />} />
+      </Routes>
+    </Router>
+  );
 };
 
 export default App;
