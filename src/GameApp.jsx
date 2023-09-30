@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { db } from "./firebaseconfig/firebase";
+import { doc } from "firebase/firestore";
 import "./GameApp.css";
 import {
   chessGameObservable,
@@ -12,8 +15,10 @@ function GameApp() {
   const [isGameOver, setIsGameOver] = useState();
   const [result, setResult] = useState();
 
+  const { id } = useParams();
+
   useEffect(() => {
-    initGameState();
+    initGameState(id !== "local" ? doc(db, "games", id) : null);
 
     const subscribe = chessGameObservable.subscribe((game) => {
       setChessBoard(game.board);

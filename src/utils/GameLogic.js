@@ -1,5 +1,7 @@
 import { Chess } from "chess.js";
 import { BehaviorSubject } from "rxjs";
+import { auth } from "../firebaseconfig/firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 const promotion = "rnb2bnr/pppPkppp/8/4p3/7q/8/PPPP1PPP/RNBQKBNR w KQ - 1 5";
 const staleMate = "4k3/4P3/4K3/8/8/8/8/8 b - - 0 78";
@@ -7,9 +9,11 @@ const checkMate =
   "rnb1kbnr/pppp1ppp/8/4p3/5PPq/8/PPPPP2P/RNBQKBNR w KQkq - 1 3";
 const insuficcientMaterial = "k7/8/n7/8/8/8/8/7K b - - 0 1";
 
-const chess = new Chess(staleMate);
+const chess = new Chess();
 
-export const chessGameObservable = new BehaviorSubject();
+export let chessGameObservable;
+
+let trackGameReference;
 
 function finalGameResult() {
   if (chess.isCheckmate()) {
@@ -45,11 +49,54 @@ function updateGameState(pendingPromotion) {
   chessGameObservable.next(newGame);
 }
 
-export function initGameState() {
-  const fetchSavedGameFromStorage = localStorage.getItem("savedGame");
+export async function initGameState(gameDataFromFBase) {
+  const { currentUser } = auth;
 
-  fetchSavedGameFromStorage && chess.load(fetchSavedGameFromStorage);
-  updateGameState();
+  if (gameDataFromFBase) {
+    trackGameReference = gameDataFromFBase;
+    const docSnap = await getDoc(gameDataFromFBase);
+
+    if (!docSnap.exists()) {
+      return "Not Found";
+    }
+
+    const initialGameState = docSnap.data();
+    const creator = initialGameState.members.find(
+      (member) => member.creator === true
+    );
+
+    if (
+      initialGameState.status === "waiting" &&
+      creator.uid !== currentUser.uid
+    ) {
+      const currUser = {
+        uid: currentUser.uid,
+        name: localStorage.getItem("username"),
+        piece: creator.piece === "w" ? "b" : "w",
+      };
+      const updatedMembers = [...initialGameState.members, currUser];
+
+      await updateDoc(gameDataFromFBase, {
+        members: updatedMembers,
+        status: "ready",
+      });
+    } else if (
+      !initialGameState.members
+        .map((member) => member.uid)
+        .includes(currentUser.uid)
+    ) {
+      return "intruder";
+    }
+
+    chess.reset();
+  } else {
+    chessGameObservable = new BehaviorSubject();
+
+    const fetchSavedGameFromStorage = localStorage.getItem("savedGame");
+
+    fetchSavedGameFromStorage && chess.load(fetchSavedGameFromStorage);
+    updateGameState();
+  }
 }
 
 export function handleMoveIfPromotionOrNot(from, to) {
