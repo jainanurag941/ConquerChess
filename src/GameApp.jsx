@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./App.css";
+import "./GameApp.css";
 import {
   chessGameObservable,
   initGameState,
@@ -7,7 +7,7 @@ import {
 } from "./utils/GameLogic";
 import ChessBoard from "./components/ChessBoard";
 
-function App() {
+function GameApp() {
   const [chessboard, setChessBoard] = useState([]);
   const [isGameOver, setIsGameOver] = useState();
   const [result, setResult] = useState();
@@ -24,7 +24,7 @@ function App() {
     return () => subscribe.unsubscribe();
   }, []);
   return (
-    <div className="container">
+    <div className="app-container">
       {isGameOver && (
         <h2 className="game-over-text">
           GAME OVER
@@ -41,4 +41,4 @@ function App() {
   );
 }
 
-export default App;
+export default GameApp;
