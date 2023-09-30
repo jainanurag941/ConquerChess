@@ -11,16 +11,44 @@ const chess = new Chess(staleMate);
 
 export const chessGameObservable = new BehaviorSubject();
 
+function finalGameResult() {
+  if (chess.isCheckmate()) {
+    const winner = chess.turn() === "w" ? "BLACK" : "WHITE";
+    return `CHECKMATE - WINNER - ${winner}`;
+  } else if (chess.isDraw()) {
+    let reason = "Game ended in a draw";
+    if (chess.isStalemate()) {
+      reason = "STALEMATE";
+    } else if (chess.isThreefoldRepetition()) {
+      reason = "REPETITION";
+    } else if (chess.isInsufficientMaterial()) {
+      reason = "INSUFFICIENT MATERIAL";
+    }
+    return `DRAW - ${reason}`;
+  } else {
+    return "UNKNOWN REASON";
+  }
+}
+
 function updateGameState(pendingPromotion) {
+  const isGameOver = chess.isGameOver();
+
   const newGame = {
     board: chess.board(),
     pendingPromotion,
+    isGameOver,
+    result: isGameOver ? finalGameResult() : null,
   };
+
+  localStorage.setItem("savedGame", chess.fen());
 
   chessGameObservable.next(newGame);
 }
 
 export function initGameState() {
+  const fetchSavedGameFromStorage = localStorage.getItem("savedGame");
+
+  fetchSavedGameFromStorage && chess.load(fetchSavedGameFromStorage);
   updateGameState();
 }
 
@@ -54,4 +82,9 @@ export function move(from, to, promotion) {
 
     ifValidMove && updateGameState();
   } catch (error) {}
+}
+
+export function resetGame() {
+  chess.reset();
+  updateGameState();
 }

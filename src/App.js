@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import { chessGameObservable, initGameState } from "./utils/GameLogic";
+import {
+  chessGameObservable,
+  initGameState,
+  resetGame,
+} from "./utils/GameLogic";
 import ChessBoard from "./components/ChessBoard";
 
 function App() {
@@ -21,9 +25,18 @@ function App() {
   }, []);
   return (
     <div className="container">
+      {isGameOver && (
+        <h2 className="game-over-text">
+          GAME OVER
+          <button onClick={resetGame}>
+            <span className="game-over-text"> NEW GAME</span>
+          </button>
+        </h2>
+      )}
       <div className="chessboard-container">
         <ChessBoard chessboard={chessboard} />
       </div>
+      {result && <p className="game-over-text">{result}</p>}
     </div>
   );
 }
