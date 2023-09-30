@@ -14,11 +14,21 @@ const ChessBoard = ({ chessboard }) => {
     return (x + y) % 2 === 1;
   }
 
+  function getPiecePosition(index) {
+    const { x, y } = getCoordinatesOfBlock(index);
+    const letter = ["a", "b", "c", "d", "e", "f", "g", "h"][x];
+    return `${letter}${y + 1}`;
+  }
+
   return (
     <div className="chessboard">
       {chessboard.flat().map((chesspiece, index) => (
         <div key={index} className="square-box-piece">
-          <BoardSquareBlock chesspiece={chesspiece} black={isBlack(index)} />
+          <BoardSquareBlock
+            chesspiece={chesspiece}
+            black={isBlack(index)}
+            position={getPiecePosition(index)}
+          />
         </div>
       ))}
     </div>

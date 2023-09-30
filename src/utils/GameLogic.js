@@ -6,3 +6,7 @@ const chess = new Chess();
 export const chessGameObservable = new BehaviorSubject({
   board: chess.board(),
 });
+
+export function move(from, to) {
+  
+}
