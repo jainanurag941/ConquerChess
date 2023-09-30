@@ -1,0 +1,12 @@
+.black-square-block {
+  background: #b59963;
+}
+
+.white-square-block {
+  background: #f0d9b5;
+}
+
+.square-board-dim {
+  width: 100%;
+  height: 100%;
+}
