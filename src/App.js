@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import { chessGameObservable } from "./utils/GameLogic";
+import { chessGameObservable, initGameState } from "./utils/GameLogic";
 import ChessBoard from "./components/ChessBoard";
 
 function App() {
   const [chessboard, setChessBoard] = useState([]);
 
   useEffect(() => {
+    initGameState();
+    
     const subscribe = chessGameObservable.subscribe((game) => {
       setChessBoard(game.board);
     });

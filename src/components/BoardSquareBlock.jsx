@@ -2,7 +2,7 @@ import React from "react";
 import BoardSquareType from "./BoardSquareType";
 import SquareBlockPiece from "./SquareBlockPiece";
 import { useDrop } from "react-dnd";
-import { move } from "../utils/GameLogic";
+import { handleMoveIfPromotionOrNot } from "../utils/GameLogic";
 import "./BoardSquareBlock.css";
 
 const BoardSquareBlock = ({ chesspiece, black, position }) => {
@@ -10,7 +10,7 @@ const BoardSquareBlock = ({ chesspiece, black, position }) => {
     accept: "chesspiece",
     drop: (piece) => {
       const [fromPosition] = piece.id.split("_");
-      move(fromPosition, position);
+      handleMoveIfPromotionOrNot(fromPosition, position);
     },
   });
 
