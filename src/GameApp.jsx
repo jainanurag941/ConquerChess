@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { db } from "./firebaseconfig/firebase";
 import { doc } from "firebase/firestore";
 import "./GameApp.css";
@@ -70,66 +70,90 @@ function GameApp() {
   }
 
   return (
-    <div className="app-container">
-      {isGameOver && (
-        <h2 className="game-over-text">
-          GAME OVER
-          {game.member && game.member.creator && (
-            <button
-              onClick={async () => {
-                await resetGame();
-                navigate("/");
-              }}
+    <>
+      <nav
+        className="navbar is-success"
+        role="navigation"
+        aria-label="main navigation"
+      >
+        <div className="navbar-brand">
+          <Link className="navbar-item has-text-weight-bold is-size-3 has-text-black">
+            ConquerChess
+          </Link>
+        </div>
+
+        <div id="navbarBasicExample" className="navbar-menu is-active">
+          <div className="navbar-start">
+            <Link
+              className="navbar-item has-text-black is-size-5 has-text-weight-medium"
+              to="/high-score"
             >
-              <span className="game-over-text"> NEW GAME</span>
-            </button>
-          )}
-          {game.member && game.oponent && game.oponent.creator && (
-            <button
-              onClick={async () => {
-                navigate("/");
-              }}
-            >
-              <span className="game-over-text"> NEW GAME</span>
-            </button>
-          )}
-        </h2>
-      )}
-      <div className="chessboard-container">
-        {game.oponent && game.oponent.name && (
-          <span className="tag is-link">{game.oponent.name}</span>
-        )}
-        <ChessBoard chessboard={chessboard} position={position} />
-        {game.member && game.member.name && (
-          <span className="tag is-link">{game.member.name}</span>
-        )}
-      </div>
-      {result && <p className="game-over-text">{result}</p>}
-      {status === "waiting" && (
-        <div className="notification is-link share-game">
-          <strong>Share this game to continue</strong>
-          <br />
-          <br />
-          <div className="field has-addons">
-            <div className="control is-expanded">
-              <input
-                type="text"
-                name="sharebleLink"
-                id="sharebleLink"
-                className="input"
-                readOnly
-                value={sharebleLink}
-              />
-            </div>
-            <div className="control">
-              <button className="button is-info" onClick={copyToClipboard}>
-                Copy
-              </button>
-            </div>
+              Rankings
+            </Link>
           </div>
         </div>
-      )}
-    </div>
+      </nav>
+      <div className="app-container">
+        {isGameOver && (
+          <h2 className="game-over-text">
+            GAME OVER
+            {game.member && game.member.creator && (
+              <button
+                onClick={async () => {
+                  await resetGame();
+                  navigate("/");
+                }}
+              >
+                <span className="game-over-text"> NEW GAME</span>
+              </button>
+            )}
+            {game.member && game.oponent && game.oponent.creator && (
+              <button
+                onClick={async () => {
+                  navigate("/");
+                }}
+              >
+                <span className="game-over-text"> NEW GAME</span>
+              </button>
+            )}
+          </h2>
+        )}
+        <div className="chessboard-container">
+          {game.oponent && game.oponent.name && (
+            <span className="tag is-link">{game.oponent.name}</span>
+          )}
+          <ChessBoard chessboard={chessboard} position={position} />
+          {game.member && game.member.name && (
+            <span className="tag is-link">{game.member.name}</span>
+          )}
+        </div>
+        {result && <p className="game-over-text">{result}</p>}
+        {status === "waiting" && (
+          <div className="notification is-link share-game">
+            <strong>Share this game to continue</strong>
+            <br />
+            <br />
+            <div className="field has-addons">
+              <div className="control is-expanded">
+                <input
+                  type="text"
+                  name="sharebleLink"
+                  id="sharebleLink"
+                  className="input"
+                  readOnly
+                  value={sharebleLink}
+                />
+              </div>
+              <div className="control">
+                <button className="button is-info" onClick={copyToClipboard}>
+                  Copy
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
