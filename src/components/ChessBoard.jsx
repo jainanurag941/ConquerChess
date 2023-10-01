@@ -1,11 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./ChessBoard.css";
 import BoardSquareBlock from "./BoardSquareBlock";
 
-const ChessBoard = ({ chessboard }) => {
+const ChessBoard = ({ chessboard, position }) => {
+  const [currBoard, setCurrBoard] = useState([]);
+
+  useEffect(() => {
+    setCurrBoard(
+      position === "w" ? chessboard.flat() : chessboard.flat().reverse()
+    );
+  }, [chessboard, position]);
+
   function getCoordinatesOfBlock(index) {
-    const x = index % 8;
-    const y = Math.abs(Math.floor(index / 8) - 7);
+    const x = position === "w" ? index % 8 : Math.abs((index % 8) - 7);
+    const y =
+      position === "w"
+        ? Math.abs(Math.floor(index / 8) - 7)
+        : Math.floor(index / 8);
     return { x, y };
   }
 
@@ -22,7 +33,7 @@ const ChessBoard = ({ chessboard }) => {
 
   return (
     <div className="chessboard">
-      {chessboard.flat().map((chesspiece, index) => (
+      {currBoard.map((chesspiece, index) => (
         <div key={index} className="square-box-piece">
           <BoardSquareBlock
             chesspiece={chesspiece}

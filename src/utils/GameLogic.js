@@ -1,19 +1,16 @@
 import { Chess } from "chess.js";
 import { BehaviorSubject } from "rxjs";
 import { auth } from "../firebaseconfig/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-
-const promotion = "rnb2bnr/pppPkppp/8/4p3/7q/8/PPPP1PPP/RNBQKBNR w KQ - 1 5";
-const staleMate = "4k3/4P3/4K3/8/8/8/8/8 b - - 0 78";
-const checkMate =
-  "rnb1kbnr/pppp1ppp/8/4p3/5PPq/8/PPPPP2P/RNBQKBNR w KQkq - 1 3";
-const insuficcientMaterial = "k7/8/n7/8/8/8/8/7K b - - 0 1";
+import { getDoc, updateDoc } from "firebase/firestore";
+import { fromRef } from "rxfire/firestore";
+import { map } from "rxjs/operators";
 
 const chess = new Chess();
 
 export let chessGameObservable;
 
 let trackGameReference;
+let member;
 
 function finalGameResult() {
   if (chess.isCheckmate()) {
@@ -41,6 +38,7 @@ function updateGameState(pendingPromotion) {
     board: chess.board(),
     pendingPromotion,
     isGameOver,
+    position: chess.turn(),
     result: isGameOver ? finalGameResult() : null,
   };
 
@@ -89,7 +87,31 @@ export async function initGameState(gameDataFromFBase) {
     }
 
     chess.reset();
+
+    chessGameObservable = fromRef(gameDataFromFBase).pipe(
+      map((gameDoc) => {
+        const game = gameDoc.data();
+        const { pendingPromotion, gameData, ...restOfGame } = game;
+        member = game.members.find((m) => m.uid === currentUser.uid);
+        const oponent = game.members.find((m) => m.uid !== currentUser.uid);
+        if (gameData) {
+          chess.load(gameData);
+        }
+        const isGameOver = chess.isGameOver();
+        return {
+          board: chess.board(),
+          pendingPromotion,
+          isGameOver,
+          position: member.piece,
+          member,
+          oponent,
+          result: isGameOver ? finalGameResult() : null,
+          ...restOfGame,
+        };
+      })
+    );
   } else {
+    trackGameReference = null;
     chessGameObservable = new BehaviorSubject();
 
     const fetchSavedGameFromStorage = localStorage.getItem("savedGame");

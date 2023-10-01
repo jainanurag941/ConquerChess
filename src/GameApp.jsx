@@ -14,20 +14,49 @@ function GameApp() {
   const [chessboard, setChessBoard] = useState([]);
   const [isGameOver, setIsGameOver] = useState();
   const [result, setResult] = useState();
+  const [initResult, setInitResult] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [position, setPosition] = useState(true);
 
   const { id } = useParams();
 
   useEffect(() => {
-    initGameState(id !== "local" ? doc(db, "games", id) : null);
+    let subscribe;
 
-    const subscribe = chessGameObservable.subscribe((game) => {
-      setChessBoard(game.board);
-      setIsGameOver(game.isGameOver);
-      setResult(game.result);
-    });
+    async function init() {
+      const res = await initGameState(
+        id !== "local" ? doc(db, "games", id) : null
+      );
 
-    return () => subscribe.unsubscribe();
-  }, []);
+      setInitResult(res);
+      setLoading(false);
+
+      if (!res) {
+        subscribe = chessGameObservable.subscribe((game) => {
+          setChessBoard(game.board);
+          setIsGameOver(game.isGameOver);
+          setResult(game.result);
+          setPosition(game.position);
+        });
+      }
+    }
+
+    init();
+
+    return () => subscribe && subscribe.unsubscribe();
+  }, [id]);
+
+  if (loading) {
+    return "Loading ...";
+  }
+  if (initResult === "Not Found") {
+    return "Game Not found";
+  }
+
+  if (initResult === "intruder") {
+    return "The game is already full";
+  }
+
   return (
     <div className="app-container">
       {isGameOver && (
@@ -39,7 +68,7 @@ function GameApp() {
         </h2>
       )}
       <div className="chessboard-container">
-        <ChessBoard chessboard={chessboard} />
+        <ChessBoard chessboard={chessboard} position={position} />
       </div>
       {result && <p className="game-over-text">{result}</p>}
     </div>
