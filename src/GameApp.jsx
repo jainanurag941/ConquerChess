@@ -18,6 +18,7 @@ function GameApp() {
   const [loading, setLoading] = useState(true);
   const [position, setPosition] = useState(true);
   const [status, setStatus] = useState("");
+  const [game, setGame] = useState({});
 
   const navigate = useNavigate();
 
@@ -43,6 +44,7 @@ function GameApp() {
           setResult(game.result);
           setPosition(game.position);
           setStatus(game.status);
+          setGame(game);
         });
       }
     }
@@ -83,7 +85,13 @@ function GameApp() {
         </h2>
       )}
       <div className="chessboard-container">
+        {game.oponent && game.oponent.name && (
+          <span className="tag is-link">{game.oponent.name}</span>
+        )}
         <ChessBoard chessboard={chessboard} position={position} />
+        {game.member && game.member.name && (
+          <span className="tag is-link">{game.member.name}</span>
+        )}
       </div>
       {result && <p className="game-over-text">{result}</p>}
       {status === "waiting" && (
