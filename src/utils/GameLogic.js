@@ -84,7 +84,7 @@ export async function initGameState(gameDataFromFBase) {
         uid: currentUser.uid,
         name: localStorage.getItem("username"),
         piece: creator.piece === "w" ? "b" : "w",
-        // score: 1000,
+        score: 1000,
       };
       const updatedMembers = [...initialGameState.members, currUser];
 
@@ -176,6 +176,72 @@ export function move(from, to, promotion) {
 
 export async function resetGame() {
   if (trackGameReference) {
+    let firstPlayerData;
+    let secondPlayerData;
+
+    const docSnap = await getDoc(trackGameReference);
+    const finalData = docSnap.data().members;
+
+    firstPlayerData = finalData[0];
+    secondPlayerData = finalData[1];
+
+    if (chess.isCheckmate()) {
+      const winner = chess.turn() === "w" ? "b" : "w";
+
+      const firstPiece = firstPlayerData.piece;
+      const secondPiece = secondPlayerData.piece;
+
+      if (firstPiece === winner) {
+        let score = firstPlayerData.score;
+        score = score + 30;
+        firstPlayerData = { ...firstPlayerData, score };
+        score = secondPlayerData.score;
+        score = score - 20;
+        secondPlayerData = { ...secondPlayerData, score };
+
+        const finalUpdatedArray = [firstPlayerData, secondPlayerData];
+
+        await updateDoc(trackGameReference, {
+          members: finalUpdatedArray,
+        });
+      } else if (secondPiece === winner) {
+        let score = firstPlayerData.score;
+        score = score - 20;
+        firstPlayerData = { ...firstPlayerData, score };
+        score = secondPlayerData.score;
+        score = score + 30;
+        secondPlayerData = { ...secondPlayerData, score };
+
+        const finalUpdatedArray = [firstPlayerData, secondPlayerData];
+
+        await updateDoc(trackGameReference, {
+          members: finalUpdatedArray,
+        });
+      }
+    } else if (chess.isDraw()) {
+      let score = firstPlayerData.score;
+      score = score + 15;
+      firstPlayerData = { ...firstPlayerData, score };
+      score = secondPlayerData.score;
+      score = score + 15;
+      secondPlayerData = { ...secondPlayerData, score };
+      const finalUpdatedArray = [firstPlayerData, secondPlayerData];
+      await updateDoc(trackGameReference, {
+        members: finalUpdatedArray,
+      });
+    } else {
+      let score = firstPlayerData.score;
+      score = score - 10;
+      firstPlayerData = { ...firstPlayerData, score };
+      score = secondPlayerData.score;
+      score = score - 10;
+      secondPlayerData = { ...secondPlayerData, score };
+      const finalUpdatedArray = [firstPlayerData, secondPlayerData];
+      await updateDoc(trackGameReference, {
+        members: finalUpdatedArray,
+      });
+    }
+
     await updateGameState(null, true);
     chess.reset();
   } else {

@@ -19,12 +19,6 @@ function GameApp() {
   const [position, setPosition] = useState(true);
   const [status, setStatus] = useState("");
   const [game, setGame] = useState({});
-  const [finalWinnerResult, setFinalWinnerResult] = useState();
-
-  result &&
-    result.then((value) => {
-      setFinalWinnerResult(value);
-    });
 
   const navigate = useNavigate();
 
@@ -80,14 +74,25 @@ function GameApp() {
       {isGameOver && (
         <h2 className="game-over-text">
           GAME OVER
-          <button
-            onClick={async () => {
-              await resetGame();
-              navigate("/");
-            }}
-          >
-            <span className="game-over-text"> NEW GAME</span>
-          </button>
+          {game.member && game.member.creator && (
+            <button
+              onClick={async () => {
+                await resetGame();
+                navigate("/");
+              }}
+            >
+              <span className="game-over-text"> NEW GAME</span>
+            </button>
+          )}
+          {game.member && game.oponent && game.oponent.creator && (
+            <button
+              onClick={async () => {
+                navigate("/");
+              }}
+            >
+              <span className="game-over-text"> NEW GAME</span>
+            </button>
+          )}
         </h2>
       )}
       <div className="chessboard-container">
@@ -99,9 +104,7 @@ function GameApp() {
           <span className="tag is-link">{game.member.name}</span>
         )}
       </div>
-      {finalWinnerResult && (
-        <p className="game-over-text">{finalWinnerResult}</p>
-      )}
+      {result && <p className="game-over-text">{result}</p>}
       {status === "waiting" && (
         <div className="notification is-link share-game">
           <strong>Share this game to continue</strong>
