@@ -28,6 +28,7 @@ const HomeScreen = () => {
           : startingPiece,
       name: localStorage.getItem("username"),
       creator: true,
+      // score: 1000,
     };
 
     const game = {

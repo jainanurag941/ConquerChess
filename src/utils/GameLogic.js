@@ -84,6 +84,7 @@ export async function initGameState(gameDataFromFBase) {
         uid: currentUser.uid,
         name: localStorage.getItem("username"),
         piece: creator.piece === "w" ? "b" : "w",
+        // score: 1000,
       };
       const updatedMembers = [...initialGameState.members, currUser];
 

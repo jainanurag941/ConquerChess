@@ -19,6 +19,12 @@ function GameApp() {
   const [position, setPosition] = useState(true);
   const [status, setStatus] = useState("");
   const [game, setGame] = useState({});
+  const [finalWinnerResult, setFinalWinnerResult] = useState();
+
+  result &&
+    result.then((value) => {
+      setFinalWinnerResult(value);
+    });
 
   const navigate = useNavigate();
 
@@ -93,7 +99,9 @@ function GameApp() {
           <span className="tag is-link">{game.member.name}</span>
         )}
       </div>
-      {result && <p className="game-over-text">{result}</p>}
+      {finalWinnerResult && (
+        <p className="game-over-text">{finalWinnerResult}</p>
+      )}
       {status === "waiting" && (
         <div className="notification is-link share-game">
           <strong>Share this game to continue</strong>
