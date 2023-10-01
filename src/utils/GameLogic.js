@@ -31,20 +31,27 @@ function finalGameResult() {
   }
 }
 
-function updateGameState(pendingPromotion) {
+async function updateGameState(pendingPromotion) {
   const isGameOver = chess.isGameOver();
 
-  const newGame = {
-    board: chess.board(),
-    pendingPromotion,
-    isGameOver,
-    position: chess.turn(),
-    result: isGameOver ? finalGameResult() : null,
-  };
+  if (trackGameReference) {
+    await updateDoc(trackGameReference, {
+      gameData: chess.fen(),
+      pendingPromotion: pendingPromotion || null,
+    });
+  } else {
+    const newGame = {
+      board: chess.board(),
+      pendingPromotion,
+      isGameOver,
+      position: chess.turn(),
+      result: isGameOver ? finalGameResult() : null,
+    };
 
-  localStorage.setItem("savedGame", chess.fen());
+    localStorage.setItem("savedGame", chess.fen());
 
-  chessGameObservable.next(newGame);
+    chessGameObservable.next(newGame);
+  }
 }
 
 export async function initGameState(gameDataFromFBase) {
@@ -126,14 +133,14 @@ export function handleMoveIfPromotionOrNot(from, to) {
     .moves({ verbose: true })
     .filter((mprom) => mprom.promotion);
 
+  let pendingPromotion;
+
   if (
     availablePromotions.some((p) => `${p.from}:${p.to}` === `${from}:${to}`)
   ) {
-    const pendingPromotion = { from, to, color: availablePromotions[0].color };
+    pendingPromotion = { from, to, color: availablePromotions[0].color };
     updateGameState(pendingPromotion);
   }
-
-  const { pendingPromotion } = chessGameObservable.getValue();
 
   if (!pendingPromotion) {
     move(from, to);
@@ -147,9 +154,16 @@ export function move(from, to, promotion) {
       ifMoveToPromote.promotion = promotion;
     }
 
-    const ifValidMove = chess.move(ifMoveToPromote);
+    if (trackGameReference) {
+      if (member.piece === chess.turn()) {
+        const ifValidMove = chess.move(ifMoveToPromote);
+        ifValidMove && updateGameState();
+      }
+    } else {
+      const ifValidMove = chess.move(ifMoveToPromote);
 
-    ifValidMove && updateGameState();
+      ifValidMove && updateGameState();
+    }
   } catch (error) {}
 }
 
