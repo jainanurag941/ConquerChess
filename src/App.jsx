@@ -6,6 +6,7 @@ import UserForm from "./components/UserForm";
 import GameApp from "./GameApp";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../src/firebaseconfig/firebase";
+import HighScoreScreen from "./screens/HighScoreScreen";
 
 const App = () => {
   const [user, loading, error] = useAuthState(auth);
@@ -24,6 +25,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route exact path="/" element={<HomeScreen />} />
+        <Route exact path="/high-score" element={<HighScoreScreen />} />
         <Route path="/game/:id" element={<GameApp />} />
       </Routes>
     </Router>
