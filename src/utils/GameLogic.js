@@ -31,10 +31,16 @@ function finalGameResult() {
   }
 }
 
-async function updateGameState(pendingPromotion) {
+async function updateGameState(pendingPromotion, checkIfToReset) {
   const isGameOver = chess.isGameOver();
 
   if (trackGameReference) {
+    if (checkIfToReset) {
+      await updateDoc(trackGameReference, {
+        status: "over",
+      });
+    }
+
     await updateDoc(trackGameReference, {
       gameData: chess.fen(),
       pendingPromotion: pendingPromotion || null,
@@ -167,7 +173,12 @@ export function move(from, to, promotion) {
   } catch (error) {}
 }
 
-export function resetGame() {
-  chess.reset();
-  updateGameState();
+export async function resetGame() {
+  if (trackGameReference) {
+    await updateGameState(null, true);
+    chess.reset();
+  } else {
+    chess.reset();
+    updateGameState();
+  }
 }

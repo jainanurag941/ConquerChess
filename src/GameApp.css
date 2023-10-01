@@ -31,3 +31,10 @@
   border: 2px solid white;
   border-radius: 10px;
 }
+
+.share-game {
+  position: absolute;
+  width: 500px;
+  bottom: 0;
+  left: 0;
+}

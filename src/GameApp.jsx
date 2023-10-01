@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { db } from "./firebaseconfig/firebase";
 import { doc } from "firebase/firestore";
 import "./GameApp.css";
@@ -17,8 +17,13 @@ function GameApp() {
   const [initResult, setInitResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [position, setPosition] = useState(true);
+  const [status, setStatus] = useState("");
+
+  const navigate = useNavigate();
 
   const { id } = useParams();
+
+  const sharebleLink = window.location.href;
 
   useEffect(() => {
     let subscribe;
@@ -37,6 +42,7 @@ function GameApp() {
           setIsGameOver(game.isGameOver);
           setResult(game.result);
           setPosition(game.position);
+          setStatus(game.status);
         });
       }
     }
@@ -45,6 +51,10 @@ function GameApp() {
 
     return () => subscribe && subscribe.unsubscribe();
   }, [id]);
+
+  async function copyToClipboard() {
+    await navigator.clipboard.writeText(sharebleLink);
+  }
 
   if (loading) {
     return "Loading ...";
@@ -62,7 +72,12 @@ function GameApp() {
       {isGameOver && (
         <h2 className="game-over-text">
           GAME OVER
-          <button onClick={resetGame}>
+          <button
+            onClick={async () => {
+              await resetGame();
+              navigate("/");
+            }}
+          >
             <span className="game-over-text"> NEW GAME</span>
           </button>
         </h2>
@@ -71,6 +86,30 @@ function GameApp() {
         <ChessBoard chessboard={chessboard} position={position} />
       </div>
       {result && <p className="game-over-text">{result}</p>}
+      {status === "waiting" && (
+        <div className="notification is-link share-game">
+          <strong>Share this game to continue</strong>
+          <br />
+          <br />
+          <div className="field has-addons">
+            <div className="control is-expanded">
+              <input
+                type="text"
+                name="sharebleLink"
+                id="sharebleLink"
+                className="input"
+                readOnly
+                value={sharebleLink}
+              />
+            </div>
+            <div className="control">
+              <button className="button is-info" onClick={copyToClipboard}>
+                Copy
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
