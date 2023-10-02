@@ -1,4 +1,6 @@
 import React from "react";
+import { css } from "@emotion/react";
+import { PacmanLoader } from "react-spinners";
 import "./GameApp.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomeScreen from "./screens/HomeScreen";
@@ -11,8 +13,16 @@ import HighScoreScreen from "./screens/HighScoreScreen";
 const App = () => {
   const [user, loading, error] = useAuthState(auth);
 
+  const override = css`
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+  `;
+
   if (loading) {
-    return "loading ...";
+    return (
+      <PacmanLoader color="#36d7b7" loading={true} css={override} size={50} />
+    );
   }
   if (error) {
     return "There was an error";

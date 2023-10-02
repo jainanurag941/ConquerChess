@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { css } from "@emotion/react";
+import { PacmanLoader } from "react-spinners";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { db, auth } from "./firebaseconfig/firebase";
 import { doc } from "firebase/firestore";
@@ -22,6 +24,12 @@ function GameApp() {
   const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
+
+  const override = css`
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+  `;
 
   const { id } = useParams();
 
@@ -67,7 +75,9 @@ function GameApp() {
   }
 
   if (loading) {
-    return "Loading ...";
+    return (
+      <PacmanLoader color="#36d7b7" loading={true} css={override} size={50} />
+    );
   }
   if (initResult === "Not Found") {
     return "Game Not found";

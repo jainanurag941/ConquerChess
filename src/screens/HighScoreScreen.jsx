@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebaseconfig/firebase";
 import { collection, getDocs } from "firebase/firestore";
-import { Link } from "react-router-dom";
 
 const HighScoreScreen = () => {
   const [highScoreData, setHighScoreData] = useState([]);
