@@ -12,20 +12,24 @@ const HighScoreScreen = () => {
       let finalHighScoreArrayToDisplay = [];
       querySnapshot.forEach((doc) => {
         const individualGameMembersData = doc.data().members;
-        const firstMember = individualGameMembersData[0];
-        const secondMember = individualGameMembersData[1];
 
-        const firstMemberRequiredData = {
-          name: firstMember.name,
-          score: firstMember.score,
-        };
-        finalHighScoreArrayToDisplay.push(firstMemberRequiredData);
+        if (individualGameMembersData[0]) {
+          const firstMember = individualGameMembersData[0];
+          const firstMemberRequiredData = {
+            name: firstMember.name,
+            score: firstMember.score,
+          };
+          finalHighScoreArrayToDisplay.push(firstMemberRequiredData);
+        }
 
-        const secondMemberRequiredData = {
-          name: secondMember.name,
-          score: secondMember.score,
-        };
-        finalHighScoreArrayToDisplay.push(secondMemberRequiredData);
+        if (individualGameMembersData[1]) {
+          const secondMember = individualGameMembersData[1];
+          const secondMemberRequiredData = {
+            name: secondMember.name,
+            score: secondMember.score,
+          };
+          finalHighScoreArrayToDisplay.push(secondMemberRequiredData);
+        }
       });
 
       finalHighScoreArrayToDisplay.sort((a, b) => {
