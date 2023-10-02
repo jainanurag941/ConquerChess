@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { db } from "./firebaseconfig/firebase";
+import { db, auth } from "./firebaseconfig/firebase";
 import { doc } from "firebase/firestore";
 import "./GameApp.css";
 import {
@@ -59,6 +59,13 @@ function GameApp() {
     await navigator.clipboard.writeText(sharebleLink);
   }
 
+  async function signOut() {
+    await auth.signOut();
+    localStorage.removeItem("username");
+    localStorage.removeItem("savedGame");
+    navigate("/");
+  }
+
   if (loading) {
     return "Loading ...";
   }
@@ -102,6 +109,16 @@ function GameApp() {
                 Rankings
               </Link>
             </li>
+            {!game.member && (
+              <li className="md:ml-8 text-xl md:my-0 my-7">
+                <Link
+                  className="hover:text-orange-400 duration-500 font-bold"
+                  onClick={signOut}
+                >
+                  SignOut
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>
@@ -144,9 +161,7 @@ function GameApp() {
           </h2>
         )}
         <div className="chessboard-container">
-          {!game.member && (
-            <span className="tag is-link hidden-obj">a</span>
-          )}
+          {!game.member && <span className="tag is-link hidden-obj">a</span>}
           {game.oponent && game.oponent.name && (
             <span className="tag is-link">{game.oponent.name}</span>
           )}
