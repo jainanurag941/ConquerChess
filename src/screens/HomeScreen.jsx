@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { auth, db } from "../firebaseconfig/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import "./HomeScreen.css";
@@ -7,6 +7,7 @@ import "./HomeScreen.css";
 const HomeScreen = () => {
   const { currentUser } = auth;
   const [showModal, setShowModal] = useState(false);
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   const chooseStartingPieceOptions = [
@@ -45,9 +46,43 @@ const HomeScreen = () => {
     navigate("/game/local");
   }
 
+  const brandLogo = require("../assets/img-1.png");
+
   return (
     <>
-      <div className="columns home">
+      <div className="shadow-md w-full fixed top-0 left-0">
+        <div className="md:flex items-center justify-between bg-violet-100 py-4 md:px-10 px-7">
+          <div className="font-bold text-3xl cursor-pointer flex items-center font-[Poppins]">
+            <span className="text-2xl font-[Poppins] cursor-pointer">
+              <img className="h-12 inline" src={brandLogo} alt="conquerChess" />
+            </span>
+            ConquerChess
+          </div>
+          <div
+            onClick={() => setOpen(!open)}
+            className="text-3xl absolute right-8 top-6 cursor-pointer md:hidden"
+          >
+            <ion-icon name={open ? "close-outline" : "menu-outline"}></ion-icon>
+          </div>
+
+          <ul
+            className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-violet-100 md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${
+              open ? "top-20 opacity-100" : "top-[-490px]"
+            } md:opacity-100 opacity-0`}
+          >
+            <li className="md:ml-8 text-xl md:my-0 my-7">
+              <Link
+                className="hover:text-gray-400 duration-500 font-bold"
+                to="/high-score"
+              >
+                Rankings
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="columns home my-0 pt-20">
         <div className="column has-background-primary home-columns">
           <button className="button is-link" onClick={startLocalGame}>
             Play Locally

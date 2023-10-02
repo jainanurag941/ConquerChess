@@ -19,6 +19,7 @@ function GameApp() {
   const [position, setPosition] = useState(true);
   const [status, setStatus] = useState("");
   const [game, setGame] = useState({});
+  const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -69,31 +70,43 @@ function GameApp() {
     return "The game is already full";
   }
 
+  const brandLogo = require("./assets/img-1.png");
+
   return (
     <>
-      <nav
-        className="navbar bg-orange-100"
-        role="navigation"
-        aria-label="main navigation"
-      >
-        <div className="navbar-brand">
-          <Link className="navbar-item has-text-weight-bold is-size-3 has-text-black">
+      <div className="shadow-md w-full fixed top-0 left-0">
+        <div className="md:flex items-center justify-between bg-orange-100 py-4 md:px-10 px-7">
+          <div className="font-bold text-3xl cursor-pointer flex items-center font-[Poppins]">
+            <span className="text-2xl font-[Poppins] cursor-pointer">
+              <img className="h-12 inline" src={brandLogo} alt="conquerChess" />
+            </span>
             ConquerChess
-          </Link>
-        </div>
-
-        <div id="navbarBasicExample" className="navbar-menu is-active">
-          <div className="navbar-start">
-            <Link
-              className="navbar-item has-text-black is-size-5 has-text-weight-medium"
-              to="/high-score"
-            >
-              Rankings
-            </Link>
           </div>
+          <div
+            onClick={() => setOpen(!open)}
+            className="text-3xl absolute right-8 top-6 cursor-pointer md:hidden"
+          >
+            <ion-icon name={open ? "close-outline" : "menu-outline"}></ion-icon>
+          </div>
+
+          <ul
+            className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-orange-100 md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${
+              open ? "top-20 opacity-100" : "top-[-490px]"
+            } md:opacity-100 opacity-0`}
+          >
+            <li className="md:ml-8 text-xl md:my-0 my-7">
+              <Link
+                className="hover:text-orange-400 duration-500 font-bold"
+                to="/high-score"
+              >
+                Rankings
+              </Link>
+            </li>
+          </ul>
         </div>
-      </nav>
-      <div className="app-container">
+      </div>
+
+      <div className="app-container pt-20">
         {isGameOver && (
           <h2 className="game-over-text">
             GAME OVER

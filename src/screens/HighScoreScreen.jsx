@@ -38,22 +38,20 @@ const HighScoreScreen = () => {
     temp();
   }, []);
 
+  const brandLogo = require("../assets/img-1.png");
+
   return (
     <>
-      <nav
-        className="navbar bg-violet-100"
-        role="navigation"
-        aria-label="main navigation"
-      >
-        <div className="navbar-brand">
-          <Link
-            className="navbar-item has-text-weight-bold is-size-3 has-text-black"
-            to="/"
-          >
+      <div className="shadow-md w-full fixed top-0 left-0">
+        <div className="md:flex items-center justify-between bg-violet-100 py-4 md:px-10 px-7">
+          <div className="font-bold text-3xl cursor-pointer flex items-center font-[Poppins]">
+            <span className="text-2xl font-[Poppins] cursor-pointer">
+              <img className="h-12 inline" src={brandLogo} alt="conquerChess" />
+            </span>
             ConquerChess
-          </Link>
+          </div>
         </div>
-      </nav>
+      </div>
 
       <div className="bg-green-400 flex flex-col justify-center items-center h-screen overflow-hidden">
         <h1 className="text-4xl mb-4 font-black">LeaderBoard</h1>
