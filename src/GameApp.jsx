@@ -72,7 +72,7 @@ function GameApp() {
   return (
     <>
       <nav
-        className="navbar is-success"
+        className="navbar bg-orange-100"
         role="navigation"
         aria-label="main navigation"
       >
