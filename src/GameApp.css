@@ -11,6 +11,10 @@
   background-color: rgb(34, 34, 34);
 }
 
+.hidden-obj {
+  visibility: hidden;
+}
+
 .chessboard-container {
   width: 560px;
   height: 560px;

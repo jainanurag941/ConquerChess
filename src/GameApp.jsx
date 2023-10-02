@@ -107,6 +107,18 @@ function GameApp() {
       </div>
 
       <div className="app-container pt-5">
+        {!game.member && (
+          <h2 className="game-over-text">
+            <button
+              onClick={() => {
+                resetGame();
+                navigate("/");
+              }}
+            >
+              <span className="game-over-text"> NEW GAME</span>
+            </button>
+          </h2>
+        )}
         {isGameOver && (
           <h2 className="game-over-text">
             GAME OVER
@@ -132,6 +144,9 @@ function GameApp() {
           </h2>
         )}
         <div className="chessboard-container">
+          {!game.member && (
+            <span className="tag is-link hidden-obj">a</span>
+          )}
           {game.oponent && game.oponent.name && (
             <span className="tag is-link">{game.oponent.name}</span>
           )}
