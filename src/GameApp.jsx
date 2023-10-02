@@ -106,7 +106,7 @@ function GameApp() {
         </div>
       </div>
 
-      <div className="app-container pt-20">
+      <div className="app-container pt-5">
         {isGameOver && (
           <h2 className="game-over-text">
             GAME OVER
