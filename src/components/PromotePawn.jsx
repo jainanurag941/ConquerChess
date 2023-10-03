@@ -5,6 +5,9 @@ import "./PromotePawn.css";
 
 const validPiecesToPromote = ["r", "n", "b", "q"];
 
+// This component displays four options of promoting a pawn to the user, if there is a valid promotion and moves the piece.
+// Then the information is passed to the BoardSquareType component for the piece to render
+// A pawn can be promoted to rook, knight, bishop and queen
 const PromotePawn = ({ promotion }) => {
   const { from, to, color } = promotion;
 

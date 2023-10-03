@@ -4,6 +4,8 @@ import { auth, db } from "../firebaseconfig/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import "./HomeScreen.css";
 
+// This component presents two options to a user, either to play online or locally
+// If user choose to play online, a modal appears where they can select their starting piece (black, white or random) 
 const HomeScreen = () => {
   const { currentUser } = auth;
   const [showModal, setShowModal] = useState(false);
@@ -20,6 +22,8 @@ const HomeScreen = () => {
     setShowModal(true);
   }
 
+  // This function stores the information of game along with the person who started the game and saves it in firebase.
+  // Then it redirects the user to game page
   async function startOnlineGame(startingPiece) {
     const member = {
       uid: currentUser.uid,
@@ -42,6 +46,7 @@ const HomeScreen = () => {
     navigate(`/game/${game.gameId}`);
   }
 
+  // This function starts a local game and redirects user to game page
   function startLocalGame() {
     navigate("/game/local");
   }

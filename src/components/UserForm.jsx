@@ -2,9 +2,13 @@ import React, { useState } from "react";
 import { auth } from "../firebaseconfig/firebase";
 import { signInAnonymously } from "firebase/auth";
 
+// This component displays a form to user when they first visit the website
 const UserForm = () => {
+  // The name holds the name of the user
   const [name, setName] = useState("");
 
+  // This function saves the user name in local storage and signs in user anonymously via firebase
+  // User data is stored in firebase
   async function handleSubmit(event) {
     event.preventDefault();
     localStorage.setItem("username", name);

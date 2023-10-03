@@ -1,3 +1,5 @@
+// This file configures our website with firebase to save online multiplayer game data and user information
+
 import { initializeApp } from "firebase/app";
 import "firebase/compat/firestore";
 import "firebase/compat/auth";
@@ -17,6 +19,8 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
+// db is use to access firebase database
 export const db = getFirestore(app);
+// auth is used to check for user validity
 export const auth = getAuth(app);
 export default firebase;

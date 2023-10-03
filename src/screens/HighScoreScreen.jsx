@@ -2,16 +2,24 @@ import React, { useEffect, useState } from "react";
 import { db } from "../firebaseconfig/firebase";
 import { collection, getDocs } from "firebase/firestore";
 
+// This component displays player rankings, their name and score
 const HighScoreScreen = () => {
   const [highScoreData, setHighScoreData] = useState([]);
 
   useEffect(() => {
     async function temp() {
+      // querySnapshot contains snapshot of games collection in the database
       const querySnapshot = await getDocs(collection(db, "games"));
+
+      // finalHighScoreArrayToDisplay stores the final players data to be displayed
       let finalHighScoreArrayToDisplay = [];
+
+      // The below method is used to process the data of every game played
       querySnapshot.forEach((doc) => {
+        // individualGameMembersData stores game data of members for a particular game
         const individualGameMembersData = doc.data().members;
 
+        // A game can have two players as per Chess. If first player data is available it is processed and pushed in finalHighScoreArrayToDisplay
         if (individualGameMembersData[0]) {
           const firstMember = individualGameMembersData[0];
           const firstMemberRequiredData = {
@@ -21,6 +29,7 @@ const HighScoreScreen = () => {
           finalHighScoreArrayToDisplay.push(firstMemberRequiredData);
         }
 
+        // If second player data is available it is processed and pushed in finalHighScoreArrayToDisplay
         if (individualGameMembersData[1]) {
           const secondMember = individualGameMembersData[1];
           const secondMemberRequiredData = {

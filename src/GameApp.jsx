@@ -12,14 +12,27 @@ import {
 } from "./utils/GameLogic";
 import ChessBoard from "./components/ChessBoard";
 
+// This component displays the game page with chessboard. When the game gets over, it displays the winner, how they won and option to start the new game
 function GameApp() {
+  // chessboard stores the orientation of board at every point of time
   const [chessboard, setChessBoard] = useState([]);
+
+  // isGameOver stores if game is over or not
   const [isGameOver, setIsGameOver] = useState();
+
+  // result stores how a user won the game
   const [result, setResult] = useState();
+
+  // initResult stores the result of game at every point of time. It stores if it was a valid game or game is full or was it a valid game
   const [initResult, setInitResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [position, setPosition] = useState(true);
+
+  // status is used to see if game is in waiting state, it helps in displaying a shareable link to user
+  // which they can share with their friend and when their friend joins, the link disappears so that game can proceed
   const [status, setStatus] = useState("");
+
+  // game stores the entire information of the current game in progress
   const [game, setGame] = useState({});
   const [open, setOpen] = useState(false);
 
@@ -33,11 +46,14 @@ function GameApp() {
 
   const { id } = useParams();
 
+  // The sharebleLink stores the link which user can share with their friends and play a game online
   const sharebleLink = window.location.href;
 
   useEffect(() => {
     let subscribe;
 
+    // init function checks if game is local or online game. If it is an online game, chessGameObservable Behavior Subject is subscribed to the game
+    // and for any change in the board orientation, it listens and updates the game information
     async function init() {
       const res = await initGameState(
         id !== "local" ? doc(db, "games", id) : null
@@ -67,6 +83,7 @@ function GameApp() {
     await navigator.clipboard.writeText(sharebleLink);
   }
 
+  // This functions signs out a user
   async function signOut() {
     await auth.signOut();
     localStorage.removeItem("username");
