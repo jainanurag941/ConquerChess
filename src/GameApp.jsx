@@ -95,7 +95,6 @@ function GameApp() {
   async function signOut() {
     await auth.signOut();
     localStorage.removeItem("username");
-    localStorage.removeItem("savedGame");
     navigate("/");
   }
 
@@ -150,16 +149,14 @@ function GameApp() {
                 Rankings
               </Link>
             </li>
-            {!game.member && (
-              <li className="md:ml-8 text-xl md:my-0 my-7">
-                <Link
-                  className="hover:text-orange-400 duration-500 font-bold"
-                  onClick={signOut}
-                >
-                  SignOut
-                </Link>
-              </li>
-            )}
+            <li className="md:ml-8 text-xl md:my-0 my-7">
+              <Link
+                className="hover:text-orange-400 duration-500 font-bold"
+                onClick={signOut}
+              >
+                SignOut
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
