@@ -3,7 +3,7 @@ Multiplayer chess game that can be played online
 
 ---
 
-Conquer Chess is a web-based chess game application that allows users to play chess locally or invite friends to play online. It offers a rich gaming experience with features such as user registration, local gameplay, online multiplayer, a leaderboard, and detailed game result summaries. Built using <strong>React.js, chess.js, RxJS, Firebase, and various npm libraries</strong>, Conquer Chess provides a seamless and enjoyable chess gaming experience.
+Conquer Chess is a web-based chess game application that allows users to play chess locally or invite friends to play online. It offers a rich gaming experience with features such as user registration, local gameplay, online multiplayer, a leaderboard, and detailed game result summaries. Built using <strong>React.js, chess.js, RxJS, Firebase, Tailwind css and various npm libraries</strong>, Conquer Chess provides a seamless and enjoyable chess gaming experience.
 
 ## Table of Contents
 
@@ -54,6 +54,11 @@ To get started with Conquer Chess, follow these steps:
 
 - After the game ends, you can see which piece won and how they won.
 - Get insights into the game's outcome and strategies.
+
+### Data Persistence
+
+- **Local Game Data:** The user's local game state is stored in local storage. If a user signs out or closes the browser and then signs in, they can continue from where they left off.
+- **Online Game Data:** In the case of online games, data is stored in Firebase. Users can continue from where they left off if they sign out or close the browser.
 
 ## Sign In and Sign Out
 
