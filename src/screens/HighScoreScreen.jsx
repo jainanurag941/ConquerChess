@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebaseconfig/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { Link } from "react-router-dom";
 
 // This component displays player rankings, their name and score
 const HighScoreScreen = () => {
@@ -39,10 +40,16 @@ const HighScoreScreen = () => {
       <div className="shadow-md w-full top-0 left-0">
         <div className="md:flex items-center justify-between bg-violet-100 py-4 md:px-10 px-7">
           <div className="font-bold text-3xl cursor-pointer flex items-center font-[Poppins]">
-            <span className="text-2xl font-[Poppins] cursor-pointer">
-              <img className="h-12 inline" src={brandLogo} alt="conquerChess" />
-            </span>
-            ConquerChess
+            <Link to="/">
+              <span className="text-2xl font-[Poppins] cursor-pointer">
+                <img
+                  className="h-12 inline"
+                  src={brandLogo}
+                  alt="conquerChess"
+                />
+              </span>
+              ConquerChess
+            </Link>
           </div>
         </div>
       </div>

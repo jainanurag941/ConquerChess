@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { auth, db } from "../firebaseconfig/firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -7,10 +7,17 @@ import "./HomeScreen.css";
 // This component presents two options to a user, either to play online or locally
 // If user choose to play online, a modal appears where they can select their starting piece (black, white or random)
 const HomeScreen = () => {
+  const navigate = useNavigate();
   const { currentUser } = auth;
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate("/");
+    }
+  }, [currentUser, navigate]);
+
   const [showModal, setShowModal] = useState(false);
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
 
   const chooseStartingPieceOptions = [
     { label: "Black pieces", value: "b" },
@@ -67,10 +74,16 @@ const HomeScreen = () => {
       <div className="shadow-md w-full fixed top-0 left-0">
         <div className="md:flex items-center justify-between bg-violet-100 py-4 md:px-10 px-7">
           <div className="font-bold text-3xl cursor-pointer flex items-center font-[Poppins]">
-            <span className="text-2xl font-[Poppins] cursor-pointer">
-              <img className="h-12 inline" src={brandLogo} alt="conquerChess" />
-            </span>
-            ConquerChess
+            <Link to="/">
+              <span className="text-2xl font-[Poppins] cursor-pointer">
+                <img
+                  className="h-12 inline"
+                  src={brandLogo}
+                  alt="conquerChess"
+                />
+              </span>
+              ConquerChess
+            </Link>
           </div>
           <div
             onClick={() => setOpen(!open)}

@@ -1,39 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { auth } from "../firebaseconfig/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
 
-// This component displays a form to user when they first visit the website
-const UserForm = () => {
-  const [user] = useAuthState(auth);
+// This component displays a form to user to register on the website
+const UserSignUpForm = () => {
   const navigate = useNavigate();
+  const [user] = useAuthState(auth);
 
   useEffect(() => {
     if (user) {
       navigate("/home");
     }
   }, [user, navigate]);
-
+  
+  // The name holds the name of the user
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [invalidCredentials, setInvalidCredentials] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      localStorage.setItem("username", userCredential.user.displayName);
-      navigate("/home");
-    } catch (error) {
-      setInvalidCredentials(true);
+    if (userCredential && auth.currentUser) {
+      try {
+        updateProfile(auth.currentUser, {
+          displayName: name,
+        });
+        localStorage.setItem("username", name);
+      } catch (error) {}
     }
+
+    navigate("/");
   }
 
   const productImg = require("../assets/chess-board-img.jpg");
@@ -43,16 +47,26 @@ const UserForm = () => {
       <div className="bg-gray-100 min-h-screen flex items-center justify-center">
         <div className="bg-gray-200 flex rounded-2xl shadow-lg max-w-3xl p-5 items-center">
           <div className="md:w-1/2 px-8">
-            <h2 className="font-bold text-2xl text-[#432201]">Login</h2>
+            <h2 className="font-bold text-2xl text-[#432201]">Register</h2>
             <p className="has-text-weight-bold text-lg mt-4 text-[#432201]">
               Welcome To ConquerChess
             </p>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
               <input
+                type="name"
+                name="name"
+                id="name"
+                className="p-2 mt-8 rounded-xl border"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+              <input
                 type="email"
                 name="email"
                 id="email"
-                className="p-2 mt-8 rounded-xl border"
+                className="p-2 rounded-xl border"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -85,22 +99,17 @@ const UserForm = () => {
                 className="bg-[#432201] rounded-xl text-white py-2 hover:scale-105 duration-300"
                 type="submit"
               >
-                Login
+                Register
               </button>
-              {invalidCredentials && (
-                <p className="font-semibold text-base text-red-600">
-                  Invalid Credentials !!
-                </p>
-              )}
             </form>
 
             <div className="mt-4 text-xs flex justify-evenly items-center">
-              <p>Don't Have An Account</p>
+              <p>Already have an account!</p>
               <Link
-                to="/register"
+                to="/"
                 className="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300"
               >
-                Register
+                Login
               </Link>
             </div>
           </div>
@@ -113,4 +122,4 @@ const UserForm = () => {
   );
 };
 
-export default UserForm;
+export default UserSignUpForm;

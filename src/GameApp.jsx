@@ -3,6 +3,7 @@ import { css } from "@emotion/react";
 import { PacmanLoader } from "react-spinners";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { db, auth } from "./firebaseconfig/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { doc } from "firebase/firestore";
 import "./GameApp.css";
 import {
@@ -14,6 +15,9 @@ import ChessBoard from "./components/ChessBoard";
 
 // This component displays the game page with chessboard. When the game gets over, it displays the winner, how they won and option to start the new game
 function GameApp() {
+  const navigate = useNavigate();
+  const [user] = useAuthState(auth);
+
   // chessboard stores the orientation of board at every point of time
   const [chessboard, setChessBoard] = useState([]);
 
@@ -36,8 +40,6 @@ function GameApp() {
   const [game, setGame] = useState({});
   const [open, setOpen] = useState(false);
 
-  const navigate = useNavigate();
-
   const override = css`
     display: block;
     margin: 0 auto;
@@ -50,34 +52,40 @@ function GameApp() {
   const sharebleLink = window.location.href;
 
   useEffect(() => {
-    let subscribe;
+    try {
+      if (!user) {
+        navigate("/");
+      } else {
+        let subscribe;
 
-    // init function checks if game is local or online game. If it is an online game, chessGameObservable Behavior Subject is subscribed to the game
-    // and for any change in the board orientation, it listens and updates the game information
-    async function init() {
-      const res = await initGameState(
-        id !== "local" ? doc(db, "games", id) : null
-      );
+        // init function checks if game is local or online game. If it is an online game, chessGameObservable Behavior Subject is subscribed to the game
+        // and for any change in the board orientation, it listens and updates the game information
+        async function init() {
+          const res = await initGameState(
+            id !== "local" ? doc(db, "games", id) : null
+          );
 
-      setInitResult(res);
-      setLoading(false);
+          setInitResult(res);
+          setLoading(false);
 
-      if (!res) {
-        subscribe = chessGameObservable.subscribe((game) => {
-          setChessBoard(game.board);
-          setIsGameOver(game.isGameOver);
-          setResult(game.result);
-          setPosition(game.position);
-          setStatus(game.status);
-          setGame(game);
-        });
+          if (!res) {
+            subscribe = chessGameObservable.subscribe((game) => {
+              setChessBoard(game.board);
+              setIsGameOver(game.isGameOver);
+              setResult(game.result);
+              setPosition(game.position);
+              setStatus(game.status);
+              setGame(game);
+            });
+          }
+        }
+
+        init();
+
+        return () => subscribe && subscribe.unsubscribe();
       }
-    }
-
-    init();
-
-    return () => subscribe && subscribe.unsubscribe();
-  }, [id]);
+    } catch (error) {}
+  }, [id, navigate, user]);
 
   async function copyToClipboard() {
     await navigator.clipboard.writeText(sharebleLink);
@@ -111,10 +119,16 @@ function GameApp() {
       <div className="shadow-md w-full fixed top-0 left-0">
         <div className="md:flex items-center justify-between bg-orange-100 py-4 md:px-10 px-7">
           <div className="font-bold text-3xl cursor-pointer flex items-center font-[Poppins]">
-            <span className="text-2xl font-[Poppins] cursor-pointer">
-              <img className="h-12 inline" src={brandLogo} alt="conquerChess" />
-            </span>
-            ConquerChess
+            <Link to="/">
+              <span className="text-2xl font-[Poppins] cursor-pointer">
+                <img
+                  className="h-12 inline"
+                  src={brandLogo}
+                  alt="conquerChess"
+                />
+              </span>
+              ConquerChess
+            </Link>
           </div>
           <div
             onClick={() => setOpen(!open)}
@@ -156,7 +170,7 @@ function GameApp() {
             <button
               onClick={() => {
                 resetGame();
-                navigate("/");
+                navigate("/home");
               }}
             >
               <span className="game-over-text"> NEW GAME</span>
@@ -170,7 +184,7 @@ function GameApp() {
               <button
                 onClick={async () => {
                   await resetGame();
-                  navigate("/");
+                  navigate("/home");
                 }}
               >
                 <span className="game-over-text"> NEW GAME</span>
@@ -179,7 +193,7 @@ function GameApp() {
             {game.member && game.oponent && game.oponent.creator && (
               <button
                 onClick={async () => {
-                  navigate("/");
+                  navigate("/home");
                 }}
               >
                 <span className="game-over-text"> NEW GAME</span>

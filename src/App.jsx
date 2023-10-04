@@ -2,13 +2,14 @@ import React from "react";
 import { css } from "@emotion/react";
 import { PacmanLoader } from "react-spinners";
 import "./GameApp.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import HomeScreen from "./screens/HomeScreen";
 import UserForm from "./components/UserForm";
 import GameApp from "./GameApp";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../src/firebaseconfig/firebase";
 import HighScoreScreen from "./screens/HighScoreScreen";
+import UserSignUpForm from "./components/UserSignUpForm";
 
 // This component contains routing information so that user can be redirected to correct pages
 const App = () => {
@@ -33,19 +34,14 @@ const App = () => {
     return "There was an error";
   }
 
-  // If there is no registered user, they are redirected to User form page where they fill their information and proceed further
-  if (!user) {
-    return <UserForm />;
-  }
-
   return (
-    <Router>
-      <Routes>
-        <Route exact path="/" element={<HomeScreen />} />
-        <Route exact path="/high-score" element={<HighScoreScreen />} />
-        <Route path="/game/:id" element={<GameApp />} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route exact path="/home" element={<HomeScreen />} />
+      <Route exact path="/" element={<UserForm />} />
+      <Route exact path="/register" element={<UserSignUpForm />} />
+      <Route exact path="/high-score" element={<HighScoreScreen />} />
+      <Route path="/game/:id" element={<GameApp />} />
+    </Routes>
   );
 };
 
