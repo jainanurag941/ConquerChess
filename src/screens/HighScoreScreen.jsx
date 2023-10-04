@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 // This component displays player rankings, their name and score
 const HighScoreScreen = () => {
+  // highScoreData stores final player rankings, score and name
   const [highScoreData, setHighScoreData] = useState([]);
   const navigate = useNavigate();
 

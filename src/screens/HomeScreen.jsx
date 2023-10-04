@@ -10,6 +10,7 @@ const HomeScreen = () => {
   const navigate = useNavigate();
   const { currentUser } = auth;
 
+  // useEffect is used to check if a user is not logged in, they will be redirect them to login page
   useEffect(() => {
     if (!currentUser) {
       navigate("/");
@@ -42,6 +43,7 @@ const HomeScreen = () => {
       creator: true,
     };
 
+    // here the user data in stored separately in firebase
     const memberDataRef = doc(db, "users", currentUser.uid);
     const memberDocSnap = await getDoc(memberDataRef);
     if (!memberDocSnap.exists()) {

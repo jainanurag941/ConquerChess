@@ -4,11 +4,13 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, useNavigate } from "react-router-dom";
 
-// This component displays a form to user when they first visit the website
+// This component displays a login form to user when they first visit the website
 const UserForm = () => {
+  // getting user information from firebase
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
 
+  // useEffect is used to check if a user is already logged in, we will redirect them to home page
   useEffect(() => {
     if (user) {
       navigate("/home");
@@ -19,10 +21,12 @@ const UserForm = () => {
   const [password, setPassword] = useState("");
   const [invalidCredentials, setInvalidCredentials] = useState(false);
 
+  // below function gets triggered when user clicks on login button
   async function handleSubmit(event) {
     event.preventDefault();
 
     try {
+      // provided user information is checked in firebase and if it matches, user is logged in else invalid credentials are shown
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,

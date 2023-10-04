@@ -45,17 +45,20 @@ async function updateGameState(pendingPromotion, checkIfToReset) {
   // if trackGameReference is true, it determines it was a online game else it was a local game
   if (trackGameReference) {
     // The condition checks if user pressed on new game button, it updates game status to over and updates in firebase
-    if (checkIfToReset) {
-      await updateDoc(trackGameReference, {
-        status: "over",
-      });
-    }
 
-    // This updates game data in firebase whenever any player makes a move
-    await updateDoc(trackGameReference, {
-      gameData: chess.fen(),
-      pendingPromotion: pendingPromotion || null,
-    });
+    try {
+      if (checkIfToReset) {
+        await updateDoc(trackGameReference, {
+          status: "over",
+        });
+      }
+
+      // This updates game data in firebase whenever any player makes a move
+      await updateDoc(trackGameReference, {
+        gameData: chess.fen(),
+        pendingPromotion: pendingPromotion || null,
+      });
+    } catch (error) {}
   } else {
     // new Game contains information of local game. Then this game is saved in local storage and is informed to chessGameObservable
     const newGame = {

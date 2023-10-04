@@ -4,37 +4,47 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-// This component displays a form to user to register on the website
+// This component displays a signup form to user to register on the website
 const UserSignUpForm = () => {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
 
+  // useEffect is used to check if a user is already logged in, we will redirect them to home page
   useEffect(() => {
     if (user) {
       navigate("/home");
     }
   }, [user, navigate]);
-  
+
   // The name holds the name of the user
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // error occured keeps track if any error occured, then user is shown a message
+  const [errorOccured, setErrorOccured] = useState(false);
+
+  // below function gets triggered when user clicks on register button
   async function handleSubmit(event) {
     event.preventDefault();
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
 
-    if (userCredential && auth.currentUser) {
-      try {
+    // provided user information is stored in firebase and user is logged in
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // this condition checks if userCredential is available, we set user name in firebase as display name
+      if (userCredential && auth.currentUser) {
         updateProfile(auth.currentUser, {
           displayName: name,
         });
         localStorage.setItem("username", name);
-      } catch (error) {}
+      }
+    } catch (error) {
+      setErrorOccured(true);
     }
 
     navigate("/");
@@ -101,6 +111,11 @@ const UserSignUpForm = () => {
               >
                 Register
               </button>
+              {errorOccured && (
+                <p className="font-semibold text-base text-red-600">
+                  The website may be temporarily down !!
+                </p>
+              )}
             </form>
 
             <div className="mt-4 text-xs flex justify-evenly items-center">

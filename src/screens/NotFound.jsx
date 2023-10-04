@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+// This component displays 404 not found page if user tries to visit incorrect url
 const NotFound = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
