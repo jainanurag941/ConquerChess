@@ -1,37 +1,44 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../firebaseconfig/firebase";
+import { db, auth } from "../firebaseconfig/firebase";
 import { collection, getDocs } from "firebase/firestore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // This component displays player rankings, their name and score
 const HighScoreScreen = () => {
   const [highScoreData, setHighScoreData] = useState([]);
+  const navigate = useNavigate();
+
+  const { currentUser } = auth;
 
   useEffect(() => {
-    async function temp() {
-      // querySnapshot contains snapshot of games collection in the database
-      const querySnapshot = await getDocs(collection(db, "users"));
+    if (!currentUser) {
+      navigate("/");
+    } else {
+      async function temp() {
+        // querySnapshot contains snapshot of games collection in the database
+        const querySnapshot = await getDocs(collection(db, "users"));
 
-      // finalHighScoreArrayToDisplay stores the final players data to be displayed
-      let finalHighScoreArrayToDisplay = [];
+        // finalHighScoreArrayToDisplay stores the final players data to be displayed
+        let finalHighScoreArrayToDisplay = [];
 
-      // The below method is used to process the data of every game played
-      querySnapshot.forEach((doc) => {
-        // individualGameMembersData stores data of player
-        const individualGameMemberData = doc.data();
+        // The below method is used to process the data of every game played
+        querySnapshot.forEach((doc) => {
+          // individualGameMembersData stores data of player
+          const individualGameMemberData = doc.data();
 
-        finalHighScoreArrayToDisplay.push(individualGameMemberData);
-      });
+          finalHighScoreArrayToDisplay.push(individualGameMemberData);
+        });
 
-      finalHighScoreArrayToDisplay.sort((a, b) => {
-        return b.score - a.score;
-      });
+        finalHighScoreArrayToDisplay.sort((a, b) => {
+          return b.score - a.score;
+        });
 
-      setHighScoreData(finalHighScoreArrayToDisplay);
+        setHighScoreData(finalHighScoreArrayToDisplay);
+      }
+
+      temp();
     }
-
-    temp();
-  }, []);
+  }, [currentUser, navigate]);
 
   const brandLogo = require("../assets/img-1.png");
 
