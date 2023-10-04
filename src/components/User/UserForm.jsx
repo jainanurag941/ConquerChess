@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { auth } from "../firebaseconfig/firebase";
+import { auth } from "../../firebaseconfig/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, useNavigate } from "react-router-dom";
@@ -36,7 +36,7 @@ const UserForm = () => {
     }
   }
 
-  const productImg = require("../assets/chess-board-img.jpg");
+  const productImg = require("../../assets/chess-board-img.jpg");
 
   return (
     <>

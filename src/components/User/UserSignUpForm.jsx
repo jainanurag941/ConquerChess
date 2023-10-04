@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { auth } from "../firebaseconfig/firebase";
+import { auth } from "../../firebaseconfig/firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -40,7 +40,7 @@ const UserSignUpForm = () => {
     navigate("/");
   }
 
-  const productImg = require("../assets/chess-board-img.jpg");
+  const productImg = require("../../assets/chess-board-img.jpg");
 
   return (
     <>

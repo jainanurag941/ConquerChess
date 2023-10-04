@@ -4,12 +4,13 @@ import { PacmanLoader } from "react-spinners";
 import "./GameApp.css";
 import { Routes, Route } from "react-router-dom";
 import HomeScreen from "./screens/HomeScreen";
-import UserForm from "./components/UserForm";
+import UserForm from "./components/User/UserForm";
 import GameApp from "./GameApp";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../src/firebaseconfig/firebase";
 import HighScoreScreen from "./screens/HighScoreScreen";
-import UserSignUpForm from "./components/UserSignUpForm";
+import UserSignUpForm from "./components/User/UserSignUpForm";
+import NotFound from "./screens/NotFound";
 
 // This component contains routing information so that user can be redirected to correct pages
 const App = () => {
@@ -41,6 +42,7 @@ const App = () => {
       <Route exact path="/register" element={<UserSignUpForm />} />
       <Route exact path="/high-score" element={<HighScoreScreen />} />
       <Route path="/game/:id" element={<GameApp />} />
+      <Route path="/*" element={<NotFound />} />
     </Routes>
   );
 };
