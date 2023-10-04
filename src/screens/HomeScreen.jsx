@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { auth, db } from "../firebaseconfig/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import "./HomeScreen.css";
 
 // This component presents two options to a user, either to play online or locally
-// If user choose to play online, a modal appears where they can select their starting piece (black, white or random) 
+// If user choose to play online, a modal appears where they can select their starting piece (black, white or random)
 const HomeScreen = () => {
   const { currentUser } = auth;
   const [showModal, setShowModal] = useState(false);
@@ -33,8 +33,17 @@ const HomeScreen = () => {
           : startingPiece,
       name: localStorage.getItem("username"),
       creator: true,
-      score: 1000,
     };
+
+    const memberDataRef = doc(db, "users", currentUser.uid);
+    const memberDocSnap = await getDoc(memberDataRef);
+    if (!memberDocSnap.exists()) {
+      await setDoc(doc(db, "users", currentUser.uid), {
+        uid: currentUser.uid,
+        name: localStorage.getItem("username"),
+        score: 1000,
+      });
+    }
 
     const game = {
       status: "waiting",

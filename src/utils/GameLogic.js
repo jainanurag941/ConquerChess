@@ -1,7 +1,7 @@
 import { Chess } from "chess.js";
 import { BehaviorSubject } from "rxjs";
-import { auth } from "../firebaseconfig/firebase";
-import { getDoc, updateDoc } from "firebase/firestore";
+import { auth, db } from "../firebaseconfig/firebase";
+import { getDoc, updateDoc, doc, setDoc } from "firebase/firestore";
 import { fromRef } from "rxfire/firestore";
 import { map } from "rxjs/operators";
 
@@ -100,8 +100,18 @@ export async function initGameState(gameDataFromFBase) {
         uid: currentUser.uid,
         name: localStorage.getItem("username"),
         piece: creator.piece === "w" ? "b" : "w",
-        score: 1000,
       };
+
+      const newUserDataRef = doc(db, "users", currentUser.uid);
+      const newUserDocSnap = await getDoc(newUserDataRef);
+      if (!newUserDocSnap.exists()) {
+        await setDoc(doc(db, "users", currentUser.uid), {
+          uid: currentUser.uid,
+          name: localStorage.getItem("username"),
+          score: 1000,
+        });
+      }
+
       const updatedMembers = [...initialGameState.members, currUser];
 
       await updateDoc(gameDataFromFBase, {
@@ -210,6 +220,12 @@ export async function resetGame() {
     firstPlayerData = finalData[0];
     secondPlayerData = finalData[1];
 
+    const firstPlayerDataRef = doc(db, "users", firstPlayerData.uid);
+    const firstPlayerDocSnap = await getDoc(firstPlayerDataRef);
+
+    const secondPlayerDataRef = doc(db, "users", secondPlayerData.uid);
+    const secondPlayerDocSnap = await getDoc(secondPlayerDataRef);
+
     // This condition assign score in case of a checkmate
     // Winner gets 30 points and loser score deducts by 20
     if (chess.isCheckmate()) {
@@ -219,55 +235,55 @@ export async function resetGame() {
       const secondPiece = secondPlayerData.piece;
 
       if (firstPiece === winner) {
-        let score = firstPlayerData.score;
+        let score = firstPlayerDocSnap.data().score;
         score = score + 30;
-        firstPlayerData = { ...firstPlayerData, score };
-        score = secondPlayerData.score;
+        await updateDoc(firstPlayerDataRef, {
+          score: score,
+        });
+
+        score = secondPlayerDocSnap.data().score;
         score = score - 20;
-        secondPlayerData = { ...secondPlayerData, score };
-
-        const finalUpdatedArray = [firstPlayerData, secondPlayerData];
-
-        await updateDoc(trackGameReference, {
-          members: finalUpdatedArray,
+        await updateDoc(secondPlayerDataRef, {
+          score: score,
         });
       } else if (secondPiece === winner) {
-        let score = firstPlayerData.score;
+        let score = firstPlayerDocSnap.data().score;
         score = score - 20;
-        firstPlayerData = { ...firstPlayerData, score };
-        score = secondPlayerData.score;
+        await updateDoc(firstPlayerDataRef, {
+          score: score,
+        });
+
+        score = secondPlayerDocSnap.data().score;
         score = score + 30;
-        secondPlayerData = { ...secondPlayerData, score };
-
-        const finalUpdatedArray = [firstPlayerData, secondPlayerData];
-
-        await updateDoc(trackGameReference, {
-          members: finalUpdatedArray,
+        await updateDoc(secondPlayerDataRef, {
+          score: score,
         });
       }
     } else if (chess.isDraw()) {
       // This condition assign score in case of a draw
       // Both player recieve 15 points
-      let score = firstPlayerData.score;
+      let score = firstPlayerDocSnap.data().score;
       score = score + 15;
-      firstPlayerData = { ...firstPlayerData, score };
-      score = secondPlayerData.score;
+      await updateDoc(firstPlayerDataRef, {
+        score: score,
+      });
+
+      score = secondPlayerDocSnap.data().score;
       score = score + 15;
-      secondPlayerData = { ...secondPlayerData, score };
-      const finalUpdatedArray = [firstPlayerData, secondPlayerData];
-      await updateDoc(trackGameReference, {
-        members: finalUpdatedArray,
+      await updateDoc(secondPlayerDataRef, {
+        score: score,
       });
     } else {
-      let score = firstPlayerData.score;
+      let score = firstPlayerDocSnap.data().score;
       score = score - 10;
-      firstPlayerData = { ...firstPlayerData, score };
-      score = secondPlayerData.score;
+      await updateDoc(firstPlayerDataRef, {
+        score: score,
+      });
+
+      score = secondPlayerDocSnap.data().score;
       score = score - 10;
-      secondPlayerData = { ...secondPlayerData, score };
-      const finalUpdatedArray = [firstPlayerData, secondPlayerData];
-      await updateDoc(trackGameReference, {
-        members: finalUpdatedArray,
+      await updateDoc(secondPlayerDataRef, {
+        score: score,
       });
     }
 

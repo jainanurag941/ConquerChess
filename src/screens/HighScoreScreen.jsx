@@ -9,35 +9,17 @@ const HighScoreScreen = () => {
   useEffect(() => {
     async function temp() {
       // querySnapshot contains snapshot of games collection in the database
-      const querySnapshot = await getDocs(collection(db, "games"));
+      const querySnapshot = await getDocs(collection(db, "users"));
 
       // finalHighScoreArrayToDisplay stores the final players data to be displayed
       let finalHighScoreArrayToDisplay = [];
 
       // The below method is used to process the data of every game played
       querySnapshot.forEach((doc) => {
-        // individualGameMembersData stores game data of members for a particular game
-        const individualGameMembersData = doc.data().members;
+        // individualGameMembersData stores data of player
+        const individualGameMemberData = doc.data();
 
-        // A game can have two players as per Chess. If first player data is available it is processed and pushed in finalHighScoreArrayToDisplay
-        if (individualGameMembersData[0]) {
-          const firstMember = individualGameMembersData[0];
-          const firstMemberRequiredData = {
-            name: firstMember.name,
-            score: firstMember.score,
-          };
-          finalHighScoreArrayToDisplay.push(firstMemberRequiredData);
-        }
-
-        // If second player data is available it is processed and pushed in finalHighScoreArrayToDisplay
-        if (individualGameMembersData[1]) {
-          const secondMember = individualGameMembersData[1];
-          const secondMemberRequiredData = {
-            name: secondMember.name,
-            score: secondMember.score,
-          };
-          finalHighScoreArrayToDisplay.push(secondMemberRequiredData);
-        }
+        finalHighScoreArrayToDisplay.push(individualGameMemberData);
       });
 
       finalHighScoreArrayToDisplay.sort((a, b) => {
@@ -79,7 +61,7 @@ const HighScoreScreen = () => {
             {highScoreData &&
               highScoreData.map((playerData, index) => (
                 <tr
-                  key={index}
+                  key={playerData.uid}
                   className="bg-violet-200 hover:bg-violet-300 hover:scale-105 cursor-pointer duration-300"
                 >
                   <th className="py-3 px-6">{index + 1}</th>
